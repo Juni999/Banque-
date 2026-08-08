@@ -35,7 +35,7 @@ app.use(express.json());
 // IMPORTANT : seul le dossier public/ est servi statiquement.
 // users.txt et data.json sont dans le dossier racine et ne sont donc JAMAIS
 // accessibles directement depuis le navigateur.
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('.'));
 
 // ---------------------------------------------------------------------------
 // Sessions simples en mémoire (token aléatoire <-> username), via cookie HttpOnly
