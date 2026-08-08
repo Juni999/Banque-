@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Méridien Banque — Espace client</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ======================= ÉCRAN AUTHENTIFICATION ======================= -->
+<section id="auth-screen" class="auth-screen">
+  <div class="auth-panel auth-panel--brand">
+    <div class="brand-mark" aria-hidden="true">M</div>
+    <h1 class="brand-title">Méridien<br />Banque</h1>
+    <p class="brand-tagline">Votre cap financier, tenu au clair.</p>
+    <div class="ledger-illustration" aria-hidden="true">
+      <div class="ledger-line ledger-line--credit"><span>Épargne projet</span><span>+ 1 250,00 €</span></div>
+      <div class="ledger-line ledger-line--debit"><span>Virement loyer</span><span>− 780,00 €</span></div>
+      <div class="ledger-line ledger-line--credit"><span>Salaire</span><span>+ 2 400,00 €</span></div>
+    </div>
+  </div>
+
+  <div class="auth-panel auth-panel--form">
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true">Connexion</button>
+      <button class="auth-tab" id="tab-register" role="tab" aria-selected="false">Inscription</button>
+    </div>
+
+    <div id="auth-message" class="auth-message" role="alert" hidden></div>
+
+    <form id="login-form" class="auth-form" autocomplete="off">
+      <label for="login-username">Identifiant</label>
+      <input type="text" id="login-username" name="username" required maxlength="30" autocomplete="username" />
+
+      <label for="login-password">Mot de passe</label>
+      <input type="password" id="login-password" name="password" required maxlength="100" autocomplete="current-password" />
+
+      <button type="submit" class="btn btn--primary">Se connecter</button>
+    </form>
+
+    <form id="register-form" class="auth-form" autocomplete="off" hidden>
+      <label for="register-username">Identifiant</label>
+      <input type="text" id="register-username" name="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.\-]+" autocomplete="username" />
+      <p class="field-hint">3 à 30 caractères : lettres, chiffres, points, tirets ou underscores.</p>
+
+      <label for="register-password">Mot de passe</label>
+      <input type="password" id="register-password" name="password" required minlength="6" maxlength="100" autocomplete="new-password" />
+      <p class="field-hint">6 caractères minimum.</p>
+
+      <label for="register-password-confirm">Confirmer le mot de passe</label>
+      <input type="password" id="register-password-confirm" name="passwordConfirm" required minlength="6" maxlength="100" autocomplete="new-password" />
+
+      <button type="submit" class="btn btn--primary">Créer mon compte</button>
+    </form>
+  </div>
+</section>
+
+<!-- ======================= ÉCRAN APPLICATION ======================= -->
+<section id="app-screen" class="app-screen" hidden>
+
+  <header class="topbar">
+    <div class="topbar__brand">
+      <div class="brand-mark brand-mark--small" aria-hidden="true">M</div>
+      <span>Méridien Banque</span>
+    </div>
+    <div class="topbar__actions">
+      <button id="theme-toggle" class="icon-btn" type="button" title="Changer de thème" aria-label="Changer de thème">
+        <span id="theme-icon">🌙</span>
+      </button>
+      <div class="user-pill">
+        <span id="current-username">—</span>
+      </div>
+      <button id="logout-btn" class="btn btn--ghost" type="button">Déconnexion</button>
+    </div>
+  </header>
+
+  <nav class="ledger-tabs" aria-label="Navigation principale">
+    <button class="ledger-tab active" data-panel="panel-dashboard">Tableau de bord</button>
+    <button class="ledger-tab" data-panel="panel-transactions">Transactions</button>
+    <button class="ledger-tab" data-panel="panel-transfer">Virement</button>
+    <button class="ledger-tab" data-panel="panel-beneficiaries">Bénéficiaires</button>
+  </nav>
+
+  <main class="ledger-book">
+    <div id="app-message" class="app-message" role="alert" hidden></div>
+
+    <!-- ---------- TABLEAU DE BORD ---------- -->
+    <section id="panel-dashboard" class="panel active">
+      <div class="balance-hero">
+        <span class="balance-hero__label">Solde total</span>
+        <span id="total-balance" class="balance-hero__amount">— €</span>
+      </div>
+      <div id="accounts-grid" class="accounts-grid" aria-live="polite"></div>
+    </section>
+
+    <!-- ---------- TRANSACTIONS ---------- -->
+    <section id="panel-transactions" class="panel">
+      <h2 class="panel-title">Historique des transactions</h2>
+
+      <form id="filters-form" class="filters-bar">
+        <div class="filter-field">
+          <label for="filter-account">Compte</label>
+          <select id="filter-account" name="compteId">
+            <option value="">Tous les comptes</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="filter-type">Type</label>
+          <select id="filter-type" name="type">
+            <option value="">Tous</option>
+            <option value="credit">Crédit</option>
+            <option value="debit">Débit</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="filter-date-min">Du</label>
+          <input type="date" id="filter-date-min" name="dateMin" />
+        </div>
+        <div class="filter-field">
+          <label for="filter-date-max">Au</label>
+          <input type="date" id="filter-date-max" name="dateMax" />
+        </div>
+        <button type="submit" class="btn btn--primary">Filtrer</button>
+        <button type="button" id="reset-filters" class="btn btn--ghost">Réinitialiser</button>
+      </form>
+
+      <div class="table-wrap">
+        <table class="ledger-table" id="transactions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Compte</th>
+              <th>Libellé</th>
+              <th>Type</th>
+              <th class="text-right">Montant</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-tbody">
+            <tr><td colspan="5" class="empty-row">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---------- VIREMENT ---------- -->
+    <section id="panel-transfer" class="panel">
+      <h2 class="panel-title">Virement entre mes comptes</h2>
+      <form id="transfer-form" class="card-form">
+        <label for="transfer-from">Compte source</label>
+        <select id="transfer-from" name="fromAccount" required></select>
+
+        <label for="transfer-to">Compte destination</label>
+        <select id="transfer-to" name="toAccount" required></select>
+
+        <label for="transfer-amount">Montant (€)</label>
+        <input type="number" id="transfer-amount" name="amount" min="0.01" step="0.01" required />
+
+        <label for="transfer-label">Libellé (facultatif)</label>
+        <input type="text" id="transfer-label" name="libelle" maxlength="80" placeholder="Ex : Épargne du mois" />
+
+        <button type="submit" class="btn btn--primary">Valider le virement</button>
+      </form>
+    </section>
+
+    <!-- ---------- BÉNÉFICIAIRES ---------- -->
+    <section id="panel-beneficiaries" class="panel">
+      <h2 class="panel-title">Mes bénéficiaires</h2>
+
+      <form id="beneficiary-form" class="card-form">
+        <label for="beneficiary-name">Nom du bénéficiaire</label>
+        <input type="text" id="beneficiary-name" name="nom" maxlength="60" required />
+
+        <label for="beneficiary-iban">IBAN</label>
+        <input type="text" id="beneficiary-iban" name="iban" maxlength="34" placeholder="FR76XXXXXXXXXXXXXXXXXXXXXXX" required />
+
+        <button type="submit" class="btn btn--primary">Ajouter le bénéficiaire</button>
+      </form>
+
+      <ul id="beneficiaries-list" class="beneficiaries-list"></ul>
+    </section>
+
+  </main>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
